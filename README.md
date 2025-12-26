@@ -115,12 +115,7 @@ Contributions are what make the open source community such an amazing place to l
 4.  Push to the Branch (`git push origin feature/AmazingFeature`)
 5.  Open a Pull Request
 
-## License
 
-Distributed under the ISC License. See `LICENSE` for more information.
 
-## Contact
-
-Your Name - [@your_twitter](https://twitter.com/your_twitter) - email@example.com
 
 Project Link: [https://github.com/your-username/ecopick](https://github.com/your-username/ecopick)
