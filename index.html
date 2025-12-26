@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoPick Dashboard</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='index.html'" style="cursor:pointer;">♻️ EcoPick</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="detect.html">Detect</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="admin.html">Admin</a></li>
+            <li><a href="profile.html">Profile</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Turn Waste Into <span class="highlight">Instant Value</span></h1>
+        <p>
+            Upload or capture an image of your recyclable waste. Our AI instantly identifies 
+            the material type and calculates its value based on current market rates.
+        </p>
+        <div class="btn-container">
+            <button class="btn primary" onclick="location.href='detect.html'">Start Detecting</button>
+            <button class="btn secondary" onclick="location.href='dashboard.html'">View Dashboard</button>
+        </div>
+    </section>
+    <!-- Features -->
+    <section class="features">
+        <h2 onclick="location.href='/api/features'" style="cursor:pointer;">Why Choose EcoPick?</h2>
+        <p class="subtext">Powerful features to make recycling easier and more rewarding</p>
+
+        <div class="feature-grid">
+            <div class="feature-card" onclick="location.href='/api/features'">
+                <h3>📷 AI-Powered Detection</h3>
+                <p>Instantly identifies waste materials with high accuracy using advanced AI.</p>
+            </div>
+
+            <div class="feature-card" onclick="location.href='/api/pricing'">
+                <h3>📈 Real-Time Pricing</h3>
+                <p>Get market-based price estimates for your recyclables instantly.</p>
+            </div>
+
+            <div class="feature-card" onclick="location.href='index.html'">
+                <h3>🌱 Eco-Friendly</h3>
+                <p>Encourages recycling and helps build a cleaner environment.</p>
+            </div>
+
+            <div class="feature-card" onclick="location.href='/api/features'">
+                <h3>⚡ Lightning Fast</h3>
+                <p>Get results in seconds with optimized AI models.</p>
+            </div>
+
+            <div class="feature-card" onclick="location.href='/api/features'">
+                <h3>🎯 High Accuracy</h3>
+                <p>Trained on thousands of images for precise predictions.</p>
+            </div>
+
+            <div class="feature-card" onclick="location.href='dashboard.html'">
+                <h3>👤 User Dashboard</h3>
+                <p>Track your recycling history and your environmental impact.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="stat-card" onclick="location.href='/api/stats'">
+            <h2>5+</h2>
+            <p>Material Types</p>
+        </div>
+
+        <div class="stat-card" onclick="location.href='/api/stats'">
+            <h2>95%+</h2>
+            <p>Accuracy Rate</p>
+        </div>
+
+        <div class="stat-card" onclick="location.href='/api/stats'">
+            <h2>&lt;5s</h2>
+            <p>Detection Time</p>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2 onclick="location.href='index.html'" style="cursor:pointer;">Ready to Start Recycling Smarter?</h2>
+        <p>Join thousands of users making a positive impact while earning from recyclables.</p>
+        <button class="btn white" onclick="location.href='index.html'">Get Started Now</button>
+    </section>
+</body>
+</html>

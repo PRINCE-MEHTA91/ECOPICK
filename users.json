@@ -1,0 +1,102 @@
+{
+  "ECOPICK-CUST-25-2979HW": {
+    "profileId": "ECOPICK-CUST-25-2979HW",
+    "name": "prince",
+    "phoneNumber": "6206232682",
+    "createdAt": "2025-12-23T07:52:25.825Z",
+    "stats": {
+      "totalWeight": 32,
+      "totalEarnings": 785,
+      "detections": 4
+    },
+    "transactions": [
+      {
+        "id": "txn_8sa83VPKRb3nadcMrdkmr1",
+        "timestamp": "2025-12-23T08:59:13.420Z",
+        "material": "plastic",
+        "weight": 12,
+        "earnings": 144
+      },
+      {
+        "material": "Electronic ",
+        "weight": 8,
+        "earnings": 200,
+        "timestamp": "2025-12-26T06:35:35.218Z"
+      },
+      {
+        "material": "plastic",
+        "weight": 3,
+        "earnings": 36,
+        "timestamp": "2025-12-26T09:29:39.435Z"
+      },
+      {
+        "material": "metal",
+        "weight": 9,
+        "earnings": 405,
+        "timestamp": "2025-12-26T09:35:05.893Z"
+      }
+    ],
+    "email": "prince01zc@gmail.com",
+    "address": " daudnager,aurangabad ,bihar (824143)"
+  },
+  "ECOPICK-CUST-25-QGU7A7": {
+    "profileId": "ECOPICK-CUST-25-QGU7A7",
+    "name": "sam",
+    "phoneNumber": "7800034425",
+    "createdAt": "2025-12-23T07:53:18.321Z",
+    "stats": {
+      "totalWeight": 99,
+      "totalEarnings": 774,
+      "detections": 4
+    },
+    "transactions": [
+      {
+        "material": "plastic",
+        "weight": 7,
+        "price": 84,
+        "date": "2025-12-24T18:10:34.397Z"
+      },
+      {
+        "material": "organic",
+        "weight": 34,
+        "price": 102,
+        "date": "2025-12-24T18:11:26.490Z"
+      },
+      {
+        "material": "cardboard ",
+        "weight": 54,
+        "price": 540,
+        "date": "2025-12-24T18:15:57.531Z"
+      },
+      {
+        "material": "plastic",
+        "weight": 4,
+        "earnings": 48,
+        "timestamp": "2025-12-26T09:30:33.624Z"
+      }
+    ],
+    "email": "prince0111zc@gmail.com",
+    "address": "daudnager"
+  },
+  "ECOPICK-CUST-25-BSCBAF": {
+    "profileId": "ECOPICK-CUST-25-BSCBAF",
+    "name": "sam",
+    "phoneNumber": "6206232683",
+    "createdAt": "2025-12-23T11:19:48.769Z",
+    "stats": {
+      "totalWeight": 22,
+      "totalEarnings": 176,
+      "detections": 1
+    },
+    "transactions": [
+      {
+        "material": "Paper",
+        "weight": 22,
+        "earnings": 176,
+        "timestamp": "2025-12-26T09:31:52.995Z"
+      }
+    ],
+    "email": "12345",
+    "address": "sahjfhe"
+  }
+}

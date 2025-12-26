@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Waste Detection</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <style>
+        body {
+            background: #f7fafa;
+        }
+
+        .detect-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 40px;
+        }
+
+        .detect-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #image-upload-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #0f8b6d;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        #image-upload-label:hover {
+            background: #0c7a5f;
+        }
+
+        #image-upload {
+            display: none;
+        }
+
+        #preview {
+            max-width: 100%;
+            height: auto;
+            margin-top: 30px;
+            border-radius: 12px;
+            border: 2px dashed #ddd;
+            padding: 10px;
+        }
+
+        #detect-btn {
+            margin-top: 20px;
+            background: #0f8b6d;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+        }
+
+        #detect-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        #result {
+            margin-top: 25px;
+            font-size: 20px;
+            min-height: 50px;
+        }
+
+        #continue-btn {
+            margin-top: 20px;
+            background: #0f8b6d;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            display: none; /* Hidden by default */
+        }
+        .high-confidence { color: #28a745; font-weight: bold; } /* Green */
+        .medium-confidence { color: #ffc107; font-weight: bold; } /* Yellow */
+        .low-confidence { color: #dc3545; font-weight: bold; } /* Red */
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">♻️ EcoPick</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="detect.html">Detect</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="admin.html">Admin</a></li>
+            <li><a href="profile.html">Profile</a></li>
+        </ul>
+    </nav>
+
+    <div class="detect-container">
+        <h1 class="title">AI Waste Detection</h1>
+        <p class="subtitle">Upload an image and AI will detect the waste material</p>
+
+        <div class="detect-card">
+            <label for="image-upload" id="image-upload-label">Choose an Image</label>
+            <input type="file" id="image-upload" accept="image/*">
+            <img id="preview" style="display:none;">
+
+            <div id="result">
+                Upload an image to start.
+            </div>
+
+            <div id="detection-details" style="display:none;">
+                <p>Detected Material: <b id="material-name"></b></p>
+                <p>Confidence: <span id="confidence-percentage"></span></p>
+                <div class="weight-input-group">
+                    <label for="weight-input">Enter Weight (kg):</label>
+                    <input type="number" id="weight-input" step="0.01" min="0.01" placeholder="e.g., 0.5">
+                    <button id="calculate-price-btn" disabled style="display:none;">Calculate Price</button>
+                </div>
+                <p id="estimated-earnings" style="display:none;">Estimated Earnings: <b id="earnings-value"></b></p>
+            </div>
+
+            <button id="detect-btn" onclick="detectWaste()" disabled>Detect Material</button>
+
+            <button id="continue-btn" onclick="continueToPricing()">Continue</button>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Login check
+        checkAuth('Please log in or create a profile to detect waste.');
+
+        /* ================= GLOBAL DATA ================= */
+        let materialPrices = {}; // To store prices from prices.json
+
+        /* ================= DOM ELEMENTS ================= */
+        const imageUpload = document.getElementById("image-upload");
+        const preview = document.getElementById("preview");
+        const detectBtn = document.getElementById("detect-btn");
+        const continueBtn = document.getElementById("continue-btn");
+        const resultDiv = document.getElementById("result");
+
+        const detectionDetailsDiv = document.getElementById("detection-details");
+        const materialNameSpan = document.getElementById("material-name");
+        const confidencePercentageSpan = document.getElementById("confidence-percentage");
+        const weightInput = document.getElementById("weight-input");
+        const calculatePriceBtn = document.getElementById("calculate-price-btn");
+        const estimatedEarningsP = document.getElementById("estimated-earnings");
+        const earningsValueSpan = document.getElementById("earnings-value");
+
+        /* ================= INITIALIZATION ================= */
+        async function loadMaterialPrices() {
+            try {
+                const response = await fetch('/api/prices');
+                const data = await response.json();
+                if (data.status === 'success') {
+                    materialPrices = data.prices;
+                    console.log("Material prices loaded:", materialPrices);
+                } else {
+                    throw new Error(data.message || "Failed to load prices from API.");
+                }
+            } catch (error) {
+                console.error("Error loading material prices:", error);
+                alert("Could not load material prices. Price calculation may not work.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMaterialPrices);
+
+
+        /* ================= IMAGE PREVIEW ================= */
+        imageUpload.addEventListener("change", () => {
+            const file = imageUpload.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.style.display = "block";
+                resultDiv.innerText = "Image loaded. Ready to detect.";
+                detectBtn.disabled = false;
+                detectBtn.style.display = "block"; // Show the detect button
+                continueBtn.style.display = "none";
+
+                // Hide detection details and clear inputs on new image selection
+                detectionDetailsDiv.style.display = "none";
+                weightInput.value = "";
+                calculatePriceBtn.disabled = true;
+                estimatedEarningsP.style.display = "none";
+            };
+            reader.readAsDataURL(file);
+        });
+
+        /* ================= DETECTION ================= */
+        async function detectWaste() {
+            const image = document.getElementById("preview");
+            if (!image.src) {
+                alert("Please select an image first.");
+                return;
+            }
+
+            detectBtn.disabled = true;
+            detectBtn.innerText = "Detecting...";
+            resultDiv.innerText = "Analyzing image...";
+            detectionDetailsDiv.style.display = "none";
+
+            try {
+                const modelURL = "https://teachablemachine.withgoogle.com/models/kVbmR_xSe/model.json";
+                const metadataURL = "https://teachablemachine.withgoogle.com/models/kVbmR_xSe/metadata.json";
+
+                const model = await tmImage.load(modelURL, metadataURL);
+                const prediction = await model.predict(image);
+
+                prediction.sort((a, b) => b.probability - a.probability);
+
+                const bestPrediction = prediction[0];
+                const material = bestPrediction.className;
+                const confidence = Math.round(bestPrediction.probability * 100);
+
+                // Clear existing confidence classes
+                confidencePercentageSpan.className = '';
+
+                // Apply confidence styling and messages
+                if (confidence >= 80) {
+                    confidencePercentageSpan.classList.add('high-confidence');
+                    resultDiv.innerText = "Detection successful with high confidence! Enter weight to calculate earnings.";
+                } else if (confidence >= 50) {
+                    confidencePercentageSpan.classList.add('medium-confidence');
+                    resultDiv.innerText = "Detection successful with medium confidence. Enter weight to calculate earnings, but consider re-uploading if unsure.";
+                } else {
+                    confidencePercentageSpan.classList.add('low-confidence');
+                    resultDiv.innerText = "Low confidence detected. Please try uploading a clearer image for better results.";
+                    // If confidence is too low, disable further interaction
+                    weightInput.disabled = true;
+                    calculatePriceBtn.disabled = true;
+                    continueBtn.disabled = true;
+                    detectionDetailsDiv.style.display = "block"; // Still show the low confidence
+                    materialNameSpan.textContent = (materialPrices[material] && materialPrices[material].displayName) || material.toUpperCase();
+                    confidencePercentageSpan.textContent = `${confidence}%`;
+                    localStorage.setItem('detectedMaterial', material);
+                    localStorage.setItem('detectedConfidence', confidence);
+                    detectBtn.innerText = "Detect Again";
+                    return; // Stop further processing for low confidence
+                }
+
+                // Display detection results
+                materialNameSpan.textContent = (materialPrices[material] && materialPrices[material].displayName) || material.toUpperCase();
+                confidencePercentageSpan.textContent = `${confidence}%`;
+
+                detectionDetailsDiv.style.display = "block";
+                weightInput.disabled = false;
+                weightInput.focus(); // Focus on weight input
+
+                // Store detection results in localStorage
+                localStorage.setItem('detectedMaterial', material);
+                localStorage.setItem('detectedConfidence', confidence);
+
+                // Continue button enabled after weight input for calculation
+                continueBtn.style.display = "block";
+                continueBtn.disabled = true;
+
+                detectBtn.style.display = "none"; // Hide the detect button
+
+            } catch (error) {
+                console.error("Detection error:", error);
+                resultDiv.innerText = "Error during detection. Please check the console for details.";
+                detectionDetailsDiv.style.display = "none";
+                continueBtn.style.display = "none";
+                detectBtn.style.display = "block"; // Show the detect button again on error
+            } finally {
+                // We don't need to re-enable the button if it's hidden
+            }
+        }
+
+        /* ================= WEIGHT INPUT & PRICE CALCULATION ================= */
+        weightInput.addEventListener("input", () => {
+            const weight = parseFloat(weightInput.value);
+            if (weight > 0) {
+                continueBtn.disabled = false;
+            } else {
+                continueBtn.disabled = true;
+            }
+        });
+
+
+        /* ================= CONTINUE ================= */
+        function continueToPricing() {
+            let detectedMaterial = localStorage.getItem('detectedMaterial');
+            const weight = parseFloat(weightInput.value);
+
+            if (!detectedMaterial || weight <= 0) {
+                alert("Please detect a material and enter a valid weight first.");
+                return;
+            }
+
+            if (detectedMaterial.toLowerCase().includes('organic')) {
+                detectedMaterial = 'organic';
+            }
+            
+            localStorage.setItem('transactionMaterial', detectedMaterial);
+            localStorage.setItem('transactionWeight', weight.toFixed(2));
+            window.location.href = 'pricing.html';
+        }
+    </script>
+
+</body>
+</html>

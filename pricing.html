@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Pricing Details</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #f7fafa;
+        }
+
+        .pricing-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 40px;
+        }
+
+        .pricing-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .pricing-card h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #0f8b6d;
+        }
+
+        .pricing-details p {
+            font-size: 18px;
+            margin: 15px 0;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .pricing-details p:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-details strong {
+            color: #333;
+        }
+        
+        #weight-input {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .total-price {
+            margin-top: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0f8b6d;
+        }
+
+        .btn-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">♻️ EcoPick</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="detect.html">Detect</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="admin.html">Admin</a></li>
+        </ul>
+    </nav>
+
+    <div class="pricing-container">
+        <div class="pricing-card">
+            <h1>Confirm Your Transaction</h1>
+            <div class="pricing-details">
+                <p><strong>Customer Name:</strong> <span id="customer-name"></span></p>
+                <p><strong>Detected Material:</strong> <span id="material-name"></span></p>
+                <p><strong>Weight:</strong> <span id="weight-display"></span></p>
+                <p><strong>Price per Kg:</strong> <span id="price-per-kg"></span></p>
+                <p class="total-price"><strong>Estimated Earnings:</strong> <span id="total-price"></span></p>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn primary" id="sell-btn">Sell</button>
+                <button class="btn secondary" id="not-sell-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Session check
+        checkAuth('Please log in or create a profile to sell waste.');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const material = localStorage.getItem('transactionMaterial');
+            const weight = parseFloat(localStorage.getItem('transactionWeight'));
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            const materialNameSpan = document.getElementById('material-name');
+            const customerNameSpan = document.getElementById('customer-name');
+            const weightDisplaySpan = document.getElementById('weight-display');
+            const pricePerKgSpan = document.getElementById('price-per-kg');
+            const totalPriceSpan = document.getElementById('total-price');
+            const sellBtn = document.getElementById('sell-btn');
+            const notSellBtn = document.getElementById('not-sell-btn');
+            const pricingDetailsDiv = document.querySelector('.pricing-details');
+
+            if(user && user.name) {
+                customerNameSpan.textContent = user.name;
+            } else {
+                customerNameSpan.textContent = 'N/A';
+            }
+
+
+            if (!material || !weight) {
+                pricingDetailsDiv.innerHTML = '<p>No transaction data found. Please go back to the detection page and try again.</p>';
+                document.querySelector('.btn-container').style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/prices');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    const materialInfo = data.prices[material.trim().toLowerCase()];
+                    if (materialInfo) {
+                        const pricePerKg = materialInfo.price;
+                        const totalPrice = weight * pricePerKg;
+
+                        materialNameSpan.textContent = materialInfo.displayName || material;
+                        weightDisplaySpan.textContent = `${weight.toFixed(2)} kg`;
+                        pricePerKgSpan.textContent = `₹${pricePerKg.toFixed(2)}`;
+                        totalPriceSpan.textContent = `₹${totalPrice.toFixed(2)}`;
+
+                        localStorage.setItem('transactionEarnings', totalPrice.toFixed(2));
+                        localStorage.setItem('materialDisplayName', materialInfo.displayName);
+                    } else {
+                        pricingDetailsDiv.innerHTML = `<p>Could not find pricing for material: ${material}.</p>`;
+                        document.querySelector('.btn-container').style.display = 'none';
+                    }
+                } else {
+                    throw new Error(data.message || 'Failed to load prices.');
+                }
+            } catch (error) {
+                console.error("Error fetching prices:", error);
+                pricingDetailsDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                document.querySelector('.btn-container').style.display = 'none';
+            }
+            
+            sellBtn.addEventListener('click', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert("You must be logged in to sell waste.");
+                window.location.href = 'profile.html';
+                return;
+            }
+
+            const material = localStorage.getItem('transactionMaterial');
+            const weight = parseFloat(localStorage.getItem('transactionWeight'));
+            const earnings = parseFloat(localStorage.getItem('transactionEarnings'));
+
+            fetch("/api/submit-waste", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    material, 
+                    weight, 
+                    earnings,
+                    profileId: user.profileId 
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // Clear only transaction-specific data
+                    localStorage.removeItem('transactionMaterial');
+                    localStorage.removeItem('transactionWeight');
+                    localStorage.removeItem('transactionEarnings');
+                    localStorage.removeItem('materialDisplayName');
+                    localStorage.removeItem('detectedMaterial');
+                    localStorage.removeItem('detectedConfidence');
+                    
+                    alert('Transaction successful! Your profile has been updated.');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert("Submission failed: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Submit waste API error:", error);
+                alert("Server error during submission.");
+            });
+        });
+
+        notSellBtn.addEventListener('click', () => {
+            // Clear only transaction-specific data
+            localStorage.removeItem('transactionMaterial');
+            localStorage.removeItem('transactionWeight');
+            localStorage.removeItem('transactionEarnings');
+            localStorage.removeItem('materialDisplayName');
+            localStorage.removeItem('detectedMaterial');
+            localStorage.removeItem('detectedConfidence');
+            window.location.href = 'index.html';
+        });
+        });
+    </script>
+
+</body>
+</html>
