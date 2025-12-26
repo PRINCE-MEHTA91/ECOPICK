@@ -3,7 +3,7 @@
   <p align="center">
     AI-powered waste detection and recycling platform.
     <br />
-    <a href="https://github.com/your-username/ecopick"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/PRINCE-MEHTA91/ecopick"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/your-username/ecopick">View Demo</a>
@@ -26,7 +26,6 @@
 - [Getting Started](#getting-started)
 - [API Endpoints](#api-endpoints)
 - [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ## About The Project
@@ -118,4 +117,4 @@ Contributions are what make the open source community such an amazing place to l
 
 
 
-Project Link: [https://github.com/your-username/ecopick](https://github.com/your-username/ecopick)
+Project Link: [https://github.com/your-username/ecopick](https://github.com/PRINCE-MEHTA91/ecopick)
