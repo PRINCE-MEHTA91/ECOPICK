@@ -15,7 +15,7 @@ AI-powered waste detection and recycling platform.
 
 - **Frontend:** HTML, CSS, JavaScript
 - **Backend:** Node.js, Express.js
-- **AI:** Google Gemini
+- **AI:** tenserflow
 
 ## Getting Started
 
