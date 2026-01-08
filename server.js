@@ -4,7 +4,7 @@ console.log("API_KEY from .env:", process.env.API_KEY);
 const express = require("express");
 const session = require("express-session");
 const FileStore = require('session-file-store')(session);
-const apiRoutes = require("./routes/api");
+const apiRoutes = require("./api");
 const app = express();
 const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -251,3 +251,4 @@ app.get("/api/stats", (req, res) => {
 app.listen(3000, () => {
     console.log("🚀 Server running on http://localhost:3000");
 });
+
