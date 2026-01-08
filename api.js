@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, saveUsers } = require('../services/userData');
-const { calculatePrice } = require('../utils/priceCalculator');
+const { getUsers, saveUsers } = require('./services/userData');
+const { calculatePrice } = require('./utils/priceCalculator');
 
 const fs = require('fs');
 const path = require('path');
