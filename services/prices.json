@@ -1,0 +1,14 @@
+{
+  "electronic": { "displayName": "💻 E-WASTE", "price": 25.00, "gradient": "linear-gradient(90deg,#a146f5,#982efb)" },
+  "glass": { "displayName": "🍾 GLASS", "price": 5.00, "gradient": "linear-gradient(90deg,#00b8d9,#008caa)" },
+  "plastic": { "displayName": "🧴 PLASTIC", "price": 12.00, "gradient": "linear-gradient(90deg,#ff8a00,#ff5c00)" },
+  "metal": { "displayName": "🧲 METAL", "price": 45.00, "gradient": "linear-gradient(90deg,#f93154,#b32436)" },
+  "iron": { "displayName": "🔩 IRON", "price": 30.00, "gradient": "linear-gradient(90deg,#f93154,#b32436)" },
+  "paper": { "displayName": "📄 PAPER", "price": 8.00, "gradient": "linear-gradient(90deg,#22c55e,#15803d)" },
+  "organic": { "displayName": "🍃 ORGANIC WASTE", "price": 3.00, "gradient": "linear-gradient(90deg,#6ee7b7,#34d399)" },
+  "cardboard": { "displayName": "📦 CARDBOARD", "price": 10.00, "gradient": "linear-gradient(90deg,#d97706,#b45309)" },
+  "cloth": { "displayName": "👕 CLOTH", "price": 15.00, "gradient": "linear-gradient(90deg,#ec4899,#be185d)" },
+  "wood": { "displayName": "🪵 WOOD", "price": 25.00, "gradient": "linear-gradient(90deg,#ec4899,#be185d)" },
+  "batteries": { "displayName": "🔋 BATTERIES", "price": 50.00, "gradient": "linear-gradient(90deg,#f93154,#b32436)" },
+  "other": { "displayName": "❓ OTHER", "price": 0.00, "gradient": "linear-gradient(90deg,#9ca3af,#6b7280)" }
+}
