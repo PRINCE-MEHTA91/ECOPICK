@@ -6,7 +6,7 @@
     <a href="https://github.com/PRINCE-MEHTA91/ecopick"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/your-username/ecopick">View Demo</a>
+    <a href="https://ecopick.onrender.com">View Demo</a>
     ·
     <a href="https://github.com/your-username/ecopick/issues">Report Bug</a>
     ·
